@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>吕阳阳的专属游戏</title>
+    <style>
+        body {
+            background: url('bg.jpg') no-repeat center/cover;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: '微软雅黑';
+            touch-action: manipulation;
+        }
+        .buttons {
+            position: fixed;
+            bottom: 15%;
+            display: flex;
+            gap: 20px;
+        }
+        button {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            border: 3px solid #FFD700;
+            background: rgba(255,255,255,0.9);
+            font-size: 50px;
+            cursor: pointer;
+            transition: transform 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        button:active {
+            transform: scale(0.85);
+        }
+        #result {
+            position: fixed;
+            top: 20%;
+            font-size: 40px;
+            color: #FF1493;
+            text-shadow: 2px 2px white;
+            animation: pop 0.5s;
+            text-align: center;
+            padding: 20px;
+            background: rgba(255,255,255,0.8);
+            border-radius: 20px;
+        }
+        @keyframes pop {
+            0% { transform: scale(0) rotate(-30deg); }
+            80% { transform: scale(1.2) rotate(5deg); }
+            100% { transform: scale(1) rotate(0); }
+        }
+    </style>
+</head>
+<body>
+    <audio id="bgm" src="music.mp3" loop></audio>
+
+    <div id="result"></div>
+    
+    <div class="buttons">
+        <button onclick="play('✌️')">✌️</button>
+        <button onclick="play('✊')">✊</button>
+        <button onclick="play('🖐️')">🖐️</button>
+    </div>
+
+    <script>
+        const bgm = document.getElementById('bgm');
+        const result = document.getElementById('result');
+        const responses = ['✌️', '✊', '🖐️'];
+
+        // 首次点击自动播放音乐
+        document.body.addEventListener('click', () => {
+            bgm.play().catch(() => {});
+        }, { once: true });
+
+        function play(player) {
+            // 按钮点击动画
+            event.currentTarget.style.transform = 'scale(0.85)';
+            setTimeout(() => {
+                event.currentTarget.style.transform = 'scale(1)';
+            }, 200);
+
+            const computer = responses[Math.floor(Math.random() * 3)];
+            const outcome = checkResult(player, computer);
+
+            result.style.animation = 'none';
+            void result.offsetWidth; // 强制重绘动画
+            result.style.animation = 'pop 0.5s';
+
+            if(outcome === "胜利") {
+                result.innerHTML = "吕阳阳天天开心🌈";
+                new Audio('data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQ').play();
+            } else if(outcome === "平局") {
+                result.innerHTML = "加油吕阳阳💪";
+            } else {
+                result.innerHTML = "笨蛋吕阳阳🐷";
+                new Audio('data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQ').play();
+            }
+        }
+
+        function checkResult(player, computer) {
+            if (player === computer) return "平局";
+            if ((player === '✌️' && computer === '🖐️') ||
+                (player === '✊' && computer === '✌️') ||
+                (player === '🖐️' && computer === '✊')) return "胜利";
+            return "失败";
+        }
+    </script>
+</body>
+</html>
